@@ -86,7 +86,11 @@ def main(page: ft.Page):
         collapsed_sidebar.visible = not collapsed_sidebar.visible
         page.update()
 
-    theme_button = ft.IconButton("wb_sunny_outlined", on_click=change_theme)
+    # Define theme_button once
+    theme_button = ft.IconButton(
+        icon="wb_sunny_outlined" if page.theme_mode == ft.ThemeMode.DARK else "dark_mode_outlined",
+        on_click=change_theme
+    )
 
     page.appbar = ft.AppBar(
         leading=ft.IconButton("menu", on_click=toggle_sidebar),
@@ -128,14 +132,20 @@ def main(page: ft.Page):
     # Collapsed Sidebar
     collapsed_sidebar = ft.Container(
         width=50,
-        border=ft.border.all(1, "grey200"),
-        border_radius=10,
         content=ft.Column(
             [
-                ft.IconButton(icon="arrow_right", on_click=toggle_sidebar),
-                ft.IconButton(icon="add", on_click=lambda e: print("New Chat"))
+                ft.Container(
+                    content=ft.IconButton(icon="add", icon_color="white"),
+                    bgcolor="purple",
+                    width=40,
+                    height=40,
+                    border_radius=10,
+                    alignment=ft.alignment.center,
+                ),
+                ft.Container(expand=True), # Spacer
+                theme_button, # Use the defined theme_button
             ],
-            alignment=ft.MainAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.START,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
@@ -173,7 +183,7 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Row(
                     [
-                        ft.IconButton(icon="dark_mode_outlined", on_click=change_theme),
+                        theme_button, # Use the defined theme_button
                         ft.IconButton(icon="settings", on_click=lambda e: print("Settings"))
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
