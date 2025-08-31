@@ -18,7 +18,9 @@ class ChatMessage(ft.Row):
                 ft.Text(timestamp, size=8, color="grey"),
             ],
             spacing=5,
-            alignment=ft.MainAxisAlignment.START,
+            # alignment=ft.MainAxisAlignment.START,
+            # Conditionally set the alignment for the timestamp
+            horizontal_alignment=ft.CrossAxisAlignment.END if user == "You" else ft.CrossAxisAlignment.START,
         )
 
         avatar = ft.CircleAvatar(
@@ -78,7 +80,8 @@ class RecentChatItem(ft.Container):
 
 def main(page: ft.Page):
     page.title = "AI Chat"
-    page.theme_mode = ft.ThemeMode.DARK
+    page.window_icon = "assets/radgeni-tooltip.png"
+    page.theme_mode = ft.ThemeMode.LIGHT
 
     # Theme settings
     page.theme = ft.Theme(
