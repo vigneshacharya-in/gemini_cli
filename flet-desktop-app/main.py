@@ -76,7 +76,7 @@ icon_path = str(script_dir / "assets" / "icon.ico")
 
 def main(page: ft.Page):
     page.title = "AI Chat"
-    page.window_icon = "./assets/icon.ico"
+    page.window_icon = "icon.ico"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.update()
 
@@ -321,4 +321,4 @@ def main(page: ft.Page):
 
     page.add(main_layout)
 
-ft.app(target=main)
+ft.app(target=main, assets_dir="assets")
