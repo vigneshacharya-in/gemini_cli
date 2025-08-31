@@ -60,7 +60,10 @@ class RecentChatItem(ft.Container):
         else:
             if is_selected:
                 # Dark theme selected: primary background with purple border
-                self.bgcolor = "#403847"
+                self.bgcolor = "#553B6C"
+                # self.bgcolor = f"rgba(126, 87, 194, 0.5)"
+                # self.bgcolor = "purple600"
+                # self.opacity = 0.25
                 self.border = ft.border.all(1, "purple")
                 text_color = "white"
                 time_color = "grey400"
@@ -80,8 +83,9 @@ class RecentChatItem(ft.Container):
 
 def main(page: ft.Page):
     page.title = "AI Chat"
-    page.window_icon = "assets/radgeni-tooltip.png"
+    page.window_icon = "./assets/icon.png"
     page.theme_mode = ft.ThemeMode.LIGHT
+    page.update()
 
     # Theme settings
     page.theme = ft.Theme(
@@ -107,27 +111,7 @@ def main(page: ft.Page):
         )
     )
 
-    # Create separate theme buttons for collapsed and expanded sidebars
-    theme_button_collapsed = ft.IconButton(
-        icon="wb_sunny_outlined" if page.theme_mode == ft.ThemeMode.DARK else "dark_mode_outlined"
-    )
-    
-    theme_button_expanded = ft.IconButton(
-        icon="wb_sunny_outlined" if page.theme_mode == ft.ThemeMode.DARK else "dark_mode_outlined"
-    )
-
-    def change_theme(e):
-        page.theme_mode = ft.ThemeMode.DARK if page.theme_mode == ft.ThemeMode.LIGHT else ft.ThemeMode.LIGHT
-        
-        # Update both theme buttons
-        new_icon = "wb_sunny_outlined" if page.theme_mode == ft.ThemeMode.DARK else "dark_mode_outlined"
-        theme_button_collapsed.icon = new_icon
-        theme_button_expanded.icon = new_icon
-        
-        # Recreate the expanded sidebar with updated theme colors
-        update_sidebar_colors()
-        
-        page.update()
+    # --- FUNCTION DEFINITIONS MOVED HERE ---
 
     def update_sidebar_colors():
         # Clear and recreate the ListView with updated theme colors
@@ -149,14 +133,74 @@ def main(page: ft.Page):
             expand=True,
         )
 
-    # Assign the same click handler to both buttons
-    theme_button_collapsed.on_click = change_theme
-    theme_button_expanded.on_click = change_theme
+    # All functions that are called by UI elements are now defined before the UI elements
+    def change_theme(e):
+        page.theme_mode = ft.ThemeMode.DARK if page.theme_mode == ft.ThemeMode.LIGHT else ft.ThemeMode.LIGHT
+        
+        # Update icon on both buttons
+        new_icon = "wb_sunny_outlined" if page.theme_mode == ft.ThemeMode.DARK else "dark_mode_outlined"
+        theme_button_collapsed.icon = new_icon
+        theme_button_expanded.icon = new_icon
+
+        # Update the theme mode text label
+        theme_text.value = "Light Mode" if page.theme_mode == ft.ThemeMode.DARK else "Dark Mode"
+        
+
+        # new_message border colours
+        if page.theme_mode == ft.ThemeMode.DARK:
+            new_message.border_color = "grey700"
+        else:
+            new_message.border_color = "grey400"
+        
+        # Recreate the recent chat items with updated theme colors
+        update_sidebar_colors()
+        
+        page.update()
 
     def toggle_sidebar(e):
         expanded_sidebar.visible = not expanded_sidebar.visible
         collapsed_sidebar.visible = not collapsed_sidebar.visible
         page.update()
+
+    def send_message(e):
+        if new_message.value != "":
+            chat_messages.controls.append(ChatMessage(new_message.value, "You", time.strftime("%I:%M %p"), page))
+            new_message.value = ""
+            page.update()
+            
+    # --- UI ELEMENT DEFINITIONS ---
+
+    # Create separate theme buttons for collapsed and expanded sidebars
+    theme_button_collapsed = ft.IconButton(
+        icon="wb_sunny_outlined" if page.theme_mode == ft.ThemeMode.DARK else "dark_mode_outlined",
+        on_click=change_theme
+    )
+    
+    theme_button_expanded = ft.IconButton(
+        icon="wb_sunny_outlined" if page.theme_mode == ft.ThemeMode.DARK else "dark_mode_outlined"
+    )
+
+    # Create a Text control for the theme mode label
+    theme_text = ft.Text(
+        "Dark Mode" if page.theme_mode == ft.ThemeMode.LIGHT else "Light Mode",
+        color="purple",
+        weight="bold" 
+    )
+
+    # Combine icon and text into a single clickable module
+    theme_switcher = ft.Container(
+        content=ft.Row(
+            [
+                theme_button_expanded,
+                theme_text,
+            ],
+            # spacing=10,
+        ),
+        on_click=change_theme,
+        # padding=ft.padding.symmetric(horizontal=3, vertical=3),
+        border_radius=10,
+        ink=True, # Optional: Adds a ripple effect on click
+    )
 
     page.appbar = ft.AppBar(
         leading=ft.IconButton("menu", on_click=toggle_sidebar),
@@ -169,14 +213,8 @@ def main(page: ft.Page):
     # Chat messages
     chat_messages = ft.ListView(expand=True, spacing=10, auto_scroll=True)
 
-    def send_message(e):
-        if new_message.value != "":
-            chat_messages.controls.append(ChatMessage(new_message.value, "You", time.strftime("%I:%M %p"), page))
-            new_message.value = ""
-            page.update()
-
     # New message input
-    new_message = ft.TextField(hint_text="Start typing a prompt...", expand=True, border_radius=10)
+    new_message = ft.TextField(hint_text="Start typing a prompt...", expand=True, border_color = "grey400")
     send_button = ft.IconButton("send", on_click=send_message, icon_color="purple")
 
     # Main content
@@ -247,10 +285,10 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Row(
                     [
-                        theme_button_expanded, # Use separate theme button for expanded sidebar
-                        ft.IconButton(icon="settings", on_click=lambda e: print("Settings"))
+                        theme_switcher, # Use the new combined theme switcher module
+                        # ft.IconButton(icon="settings", on_click=lambda e: print("Settings"))
                     ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    alignment=ft.MainAxisAlignment.START,
                 )
             ],
             spacing=10,
