@@ -1,7 +1,7 @@
 import flet as ft
 import tkinter as tk
 import time
-import pathlib
+# import pathlib
 
 class ChatMessage(ft.Row):
     def __init__(self, message: str, user: str, timestamp: str, page: ft.Page):
@@ -70,13 +70,15 @@ class RecentChatItem(ft.Container):
             ]
         )
 
-script_dir = pathlib.Path(__file__).parent 
 # Construct the full, absolute path to your icon
-icon_path = str(script_dir / "assets" / "icon.ico")
+# script_dir = pathlib.Path(__file__).parent 
+# icon_path = str(script_dir / "assets" / "icon2.ico")
 
 def main(page: ft.Page):
     page.title = "AI Chat"
-    page.window_icon = "icon.ico"
+    # page.window_icon = "icon2.ico"
+    # page.window_icon = icon_path
+    # page.window_icon = None
     page.theme_mode = ft.ThemeMode.LIGHT
     page.update()
 
@@ -321,4 +323,5 @@ def main(page: ft.Page):
 
     page.add(main_layout)
 
-ft.app(target=main, assets_dir="assets")
+# ft.app(target=main, assets_dir="assets")
+ft.app(target=main)

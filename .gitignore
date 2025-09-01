@@ -1,2 +1,6 @@
 flet-desktop-app/.venv*/
 flet-desktop-app/storage/
+
+# Ignore build files
+flet-desktop-app/dist/*
+flet-desktop-app/build/*
